@@ -5,3 +5,7 @@ This repository will contain the project files and the weekly exercises for the 
 ## project: db-utils
 
 An utility application for inspecting local SQLite databases and exporting table and query results to `.csv` and `.json` files.
+
+## exercises
+
+The weekly exercises are located under the [`exercises`](./exercises) directory.
