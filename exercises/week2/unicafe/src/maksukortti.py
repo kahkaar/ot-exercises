@@ -1,12 +1,11 @@
 class Maksukortti:
-    def __init__(self, saldo):
-        # saldo on senteissä
+    def __init__(self, saldo: int):
         self.saldo = saldo
 
-    def lataa_rahaa(self, maara):
+    def lataa_rahaa(self, maara: int):
         self.saldo += maara
 
-    def ota_rahaa(self, maara):
+    def ota_rahaa(self, maara: int):
         if self.saldo < maara:
             return False
 

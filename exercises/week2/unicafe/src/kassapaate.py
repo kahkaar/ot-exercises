@@ -1,47 +1,56 @@
+from maksukortti import Maksukortti
+
+AFFORDABLE = 240
+EXPENSIVE = 400
+
+
 class Kassapaate:
     def __init__(self):
         self.kassassa_rahaa = 100000
         self.edulliset = 0
         self.maukkaat = 0
 
-    def syo_edullisesti_kateisella(self, maksu):
-        if maksu >= 240:
-            self.kassassa_rahaa = self.kassassa_rahaa + 240
-            self.edulliset += 1
-            return maksu - 240
-        else:
-            return maksu
+    def _add_money_to_register(self, amount: int):
+        self.kassassa_rahaa += amount
 
-    def syo_maukkaasti_kateisella(self, maksu):
-        if maksu >= 400:
-            self.kassassa_rahaa = self.kassassa_rahaa + 400
-            self.maukkaat += 1
-            return maksu - 400
-        else:
-            return maksu
+    def syo_edullisesti_kateisella(self, amount: int):
+        if amount < AFFORDABLE:
+            return amount
 
-    def syo_edullisesti_kortilla(self, kortti):
-        if kortti.saldo >= 240:
-            kortti.ota_rahaa(240)
-            self.edulliset += 1
-            return True
-        else:
+        self._add_money_to_register(AFFORDABLE)
+        self.edulliset += 1
+        return amount - AFFORDABLE
+
+    def syo_maukkaasti_kateisella(self, amount: int):
+        if amount < EXPENSIVE:
+            return amount
+
+        self._add_money_to_register(EXPENSIVE)
+        self.maukkaat += 1
+        return amount - EXPENSIVE
+
+    def syo_edullisesti_kortilla(self, card: Maksukortti):
+        if card.saldo < AFFORDABLE:
             return False
 
-    def syo_maukkaasti_kortilla(self, kortti):
-        if kortti.saldo >= 400:
-            kortti.ota_rahaa(400)
-            self.maukkaat += 1
-            return True
-        else:
+        card.ota_rahaa(AFFORDABLE)
+        self.edulliset += 1
+        return True
+
+    def syo_maukkaasti_kortilla(self, card: Maksukortti):
+        if card.saldo < EXPENSIVE:
             return False
 
-    def lataa_rahaa_kortille(self, kortti, summa):
-        if summa >= 0:
-            kortti.lataa_rahaa(summa)
-            self.kassassa_rahaa += summa
-        else:
+        card.ota_rahaa(EXPENSIVE)
+        self.maukkaat += 1
+        return True
+
+    def lataa_rahaa_kortille(self, card: Maksukortti, amount: int):
+        if amount < 0:
             return
+
+        card.lataa_rahaa(amount)
+        self.kassassa_rahaa += amount
 
     def kassassa_rahaa_euroina(self):
         return self.kassassa_rahaa / 100
