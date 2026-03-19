@@ -10,7 +10,11 @@
 
   "customizations": {
     "vscode": {
-      "extensions": ["esbenp.prettier-vscode", "Tyriar.sort-lines"]
+      "extensions": [
+        "Tyriar.sort-lines",
+        "esbenp.prettier-vscode",
+        "ms-python.isort"
+      ]
     }
   },
 
