@@ -1,0 +1,19 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+  "name": "Python 3.12 + Poetry",
+  "image": "mcr.microsoft.com/devcontainers/python:3-3.12-trixie",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/poetry:2": {}
+  },
+  "postCreateCommand": "python --version && poetry --version",
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode", "Tyriar.sort-lines"]
+    }
+  },
+
+  "containerUser": "vscode",
+  "remoteUser": "vscode"
+}
