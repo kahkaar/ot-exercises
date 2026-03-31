@@ -10,8 +10,8 @@ db-utils is a Python desktop application built with tkinter for inspecting local
 
 The local user should be able to:
 
-- [ ] open a local SQLite database file through the GUI
-- [ ] view the list of tables in the selected database
+- [x] open a local SQLite database file through the GUI
+- [x] view the list of tables in the selected database
 - [ ] run SELECT queries from the GUI
 - [ ] view query results inside the application
 - [ ] export table data or query results to `csv`
