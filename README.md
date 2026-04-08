@@ -59,6 +59,6 @@ Documentation for the project is located in [`db-utils/docs/`](/db-utils/docs/) 
 
 ## Documentation
 
-- [Changelog](./changelog.md)
-- [Software Requirements Specification](./srs.md)
-- [Time Logs](./time_logs.md)
+- [Changelog](/db-utils/docs/changelog.md)
+- [Software Requirements Specification](/db-utils/docs/srs.md)
+- [Time Logs](/db-utils/docs/time_logs.md)
