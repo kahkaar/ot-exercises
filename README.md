@@ -7,7 +7,7 @@ This repository contains the project source code and the weekly exercises for th
 A utility application for inspecting local SQLite databases and exporting table and query results as `.csv` and `.json` files.
 
 The source code is located under the [`db-utils/`](/db-utils/) directory.
-Documentation for the project is located in [`db-utils/docs/`](/db-utils/docs/).
+Documentation for the project is located in [`db-utils/docs/`](/db-utils/docs/) (see [Documentation](#documentation)).
 
 ## Installation
 
