@@ -62,6 +62,49 @@ class TestDatabaseService(unittest.TestCase):
         db = DatabaseService(self.db_path)
         self.assertEqual(db.list_tables(), [])
 
+    def test_run_select_query_returns_columns_and_rows(self) -> None:
+        """Test that run_select_query() returns columns and rows."""
+
+        with sqlite3.connect(self.db_path) as con:
+            con.execute(
+                "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);")
+            con.execute("INSERT INTO users (name) VALUES ('Ada');")
+            con.execute("INSERT INTO users (name) VALUES ('Linus');")
+
+        db = DatabaseService(self.db_path)
+        columns, rows = db.run_select_query(
+            "SELECT id, name FROM users ORDER BY id;")
+
+        self.assertEqual(columns, ["id", "name"])
+        self.assertEqual(rows, [(1, "Ada"), (2, "Linus")])
+
+    def test_run_select_query_rejects_non_select_sql(self) -> None:
+        """Test that run_select_query() only accepts SELECT queries."""
+
+        _create_test_db(self.db_path, ["foo"])
+        db = DatabaseService(self.db_path)
+
+        with self.assertRaises(ValueError):
+            db.run_select_query("DELETE FROM foo;")
+
+    def test_run_select_query_reports_sql_errors(self) -> None:
+        """Test that malformed SELECT SQL raises a clear error."""
+
+        _create_test_db(self.db_path, ["foo"])
+        db = DatabaseService(self.db_path)
+
+        with self.assertRaises(ValueError):
+            db.run_select_query("SELECT FROM foo;")
+
+    def test_run_select_query_empty_query(self) -> None:
+        """Test that an empty query raises a clear error."""
+
+        _create_test_db(self.db_path, ["foo"])
+        db = DatabaseService(self.db_path)
+
+        with self.assertRaises(ValueError):
+            db.run_select_query("   ")
+
 
 if __name__ == "__main__":
     unittest.main()
