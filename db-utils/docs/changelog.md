@@ -17,7 +17,6 @@
 
 - Ability to run `SELECT` queries and view results in the GUI
 - Ability to inspect table metadata (column names and types)
-- Added test database setup files: [`schema.sql`](/db-utils/schema.sql), [`seed.py`](/db-utils/seed.py)
 - Added unit tests for metadata handling and edge cases in [`test_database_service.py`](/db-utils/tests/test_database_service.py)
 - Added architecture docs
 
