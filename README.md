@@ -22,6 +22,16 @@ Documentation for the project is located in [`db-utils/docs/`](/db-utils/docs/) 
    poetry run invoke start
    ```
 
+## Northwind Database
+
+You can download a ready-to-use `northwind.db` SQLite database from the
+[`jpwhite3/northwind-SQLite3`](https://github.com/jpwhite3/northwind-SQLite3)
+repository:
+
+```bash
+curl -L -o northwind.db https://raw.githubusercontent.com/jpwhite3/northwind-SQLite3/main/dist/northwind.db
+```
+
 ## Invoke Tasks
 
 - List the available tasks:

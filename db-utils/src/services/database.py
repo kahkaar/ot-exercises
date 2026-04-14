@@ -67,3 +67,38 @@ class DatabaseService:
             return cols, rows
         except sqlite3.Error as exc:
             raise ValueError(f"Could not execute query: {exc}") from exc
+
+    def get_table_metadata(self, table_name: str) -> list[tuple[str, str]]:
+        """Return column metadata (name, type) for a table.
+
+        Args:
+            table_name (str): The table name to inspect.
+        """
+
+        normalized_table_name = table_name.strip()
+        if not normalized_table_name:
+            raise ValueError("Table name cannot be empty.")
+
+        exists_query = """
+            SELECT 1
+            FROM sqlite_master
+            WHERE type='table' AND name = ?
+            LIMIT 1;
+        """
+
+        escaped_table_name = normalized_table_name.replace('"', '""')
+        metadata_query = f'PRAGMA table_info("{escaped_table_name}");'
+
+        try:
+            with sqlite3.connect(self._path) as con:
+                exists = con.execute(
+                    exists_query, (normalized_table_name,)).fetchone()
+                if exists is None:
+                    raise ValueError(
+                        f"Table '{normalized_table_name}' does not exist.")
+
+                rows = con.execute(metadata_query).fetchall()
+            return [(str(row[1]), str(row[2] or "")) for row in rows]
+        except sqlite3.Error as exc:
+            raise ValueError(
+                f"Could not inspect table metadata: {exc}") from exc

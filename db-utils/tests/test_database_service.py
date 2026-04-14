@@ -31,6 +31,12 @@ class TestDatabaseService(unittest.TestCase):
         db = DatabaseService(self.db_path)
         self.assertTrue(db.validate())
 
+    def test_path_returns_original_path(self) -> None:
+        """Test that path property returns the constructor path."""
+
+        db = DatabaseService(self.db_path)
+        self.assertEqual(db.path, self.db_path)
+
     def test_validate_invalid_db(self) -> None:
         """Test that validate() returns False for an invalid SQLite database."""
 
@@ -104,6 +110,60 @@ class TestDatabaseService(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             db.run_select_query("   ")
+
+    def test_get_table_metadata_returns_columns_and_types(self) -> None:
+        """Test that get_table_metadata() returns basic column metadata."""
+
+        with sqlite3.connect(self.db_path) as con:
+            con.execute(
+                """
+                CREATE TABLE users (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    created_at DATETIME
+                );
+                """
+            )
+
+        db = DatabaseService(self.db_path)
+        metadata = db.get_table_metadata("users")
+
+        self.assertEqual(
+            metadata,
+            [
+                ("id", "INTEGER"),
+                ("name", "TEXT"),
+                ("created_at", "DATETIME"),
+            ],
+        )
+
+    def test_get_table_metadata_rejects_empty_table_name(self) -> None:
+        """Test that get_table_metadata() rejects an empty table name."""
+
+        _create_test_db(self.db_path, ["foo"])
+        db = DatabaseService(self.db_path)
+
+        with self.assertRaises(ValueError):
+            db.get_table_metadata("   ")
+
+    def test_get_table_metadata_reports_missing_table(self) -> None:
+        """Test that get_table_metadata() reports a missing table."""
+
+        _create_test_db(self.db_path, ["foo"])
+        db = DatabaseService(self.db_path)
+
+        with self.assertRaises(ValueError):
+            db.get_table_metadata("missing_table")
+
+    def test_get_table_metadata_reports_sqlite_errors(self) -> None:
+        """Test that get_table_metadata() wraps sqlite errors as ValueError."""
+
+        with open(self.db_path, "w", encoding="utf-8") as f:
+            f.write("not a db")
+
+        db = DatabaseService(self.db_path)
+        with self.assertRaises(ValueError):
+            db.get_table_metadata("foo")
 
 
 if __name__ == "__main__":

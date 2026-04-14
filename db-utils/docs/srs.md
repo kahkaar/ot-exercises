@@ -16,7 +16,7 @@ The local user should be able to:
 - [x] view query results inside the application
 - [ ] export table data or query results to `csv`
 - [ ] export table data or query results to `json`
-- [ ] inspect basic table metadata (for example, column names and types)
+- [x] inspect basic table metadata (for example, column names and types)
 - [ ] receive clear error messages for invalid paths, malformed SQL, and file write failures
 
 ### Further Development Ideas
