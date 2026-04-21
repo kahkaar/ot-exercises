@@ -2,6 +2,7 @@ import tkinter as tk
 from dataclasses import dataclass
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
+from typing import Any, List, Optional, Tuple
 
 from components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
 from services.database import DatabaseService
@@ -12,23 +13,24 @@ from services.export import ExportService
 class UIComponents:
     """Component references populated during UI setup."""
 
-    table_panel: TablePanel | None = None
-    metadata_panel: MetadataPanel | None = None
-    query_panel: QueryPanel | None = None
-    results_panel: ResultsPanel | None = None
+    table_panel: Optional[TablePanel] = None
+    metadata_panel: Optional[MetadataPanel] = None
+    query_panel: Optional[QueryPanel] = None
+    results_panel: Optional[ResultsPanel] = None
 
 
 class UI:
     """Tkinter UI for opening and inspecting a local SQLite database file."""
 
     def __init__(self, root: tk.Tk) -> None:
-        self._root = root
-        self.db_path_var = tk.StringVar()
-        self.status_var = tk.StringVar(value="No database opened")
-        self._db: DatabaseService | None = None
-        self._left_panel: ttk.Frame | None = None
-        self._right_panel: ttk.Frame | None = None
-        self._components = UIComponents()
+        self._root: tk.Tk = root
+        self.db_path_var: tk.StringVar = tk.StringVar()
+        self.status_var: tk.StringVar = tk.StringVar(
+            value="No database opened")
+        self._db: Optional[DatabaseService] = None
+        self._left_panel: Optional[ttk.Frame] = None
+        self._right_panel: Optional[ttk.Frame] = None
+        self._components: UIComponents = UIComponents()
         self._create_widgets()
 
     def _create_widgets(self) -> None:
@@ -167,7 +169,7 @@ class UI:
             raise RuntimeError("Query panel not initialized.")
         return self._components.query_panel
 
-    def _update_table_list(self, tables: list[str]) -> None:
+    def _update_table_list(self, tables: List[str]) -> None:
         self._table_panel().update_tables(tables)
 
     def _clear_query_results(self) -> None:
@@ -178,14 +180,14 @@ class UI:
 
     def _update_table_metadata(
         self,
-        metadata: list[tuple[str, str]],
+        metadata: List[Tuple[str, str]],
     ) -> None:
         self._metadata_panel().update(metadata)
 
     def _update_query_results(
         self,
-        columns: list[str],
-        rows: list[tuple[object, ...]],
+        columns: List[str],
+        rows: List[Tuple[Any, ...]],
     ) -> None:
         self._results_panel().update(columns, rows)
 

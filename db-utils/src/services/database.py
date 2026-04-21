@@ -1,23 +1,20 @@
 import sqlite3
+from typing import Any, List, Tuple
 
 
 class DatabaseService:
-    """A class to inspect and validate a local SQLite database file.
-
-    Args:
-        path (str): The file path to the SQLite database.
-    """
+    """Inspect and validate a SQLite database file."""
 
     def __init__(self, path: str) -> None:
         self._path = path
 
     @property
     def path(self) -> str:
-        """Return the path to the database file."""
+        """Get database file path."""
         return self._path
 
     def validate(self) -> bool:
-        """Validate that the file is a valid SQLite database."""
+        """Check if file is a valid SQLite database."""
 
         try:
             with sqlite3.connect(self._path) as con:
@@ -26,8 +23,8 @@ class DatabaseService:
         except sqlite3.Error:
             return False
 
-    def list_tables(self) -> list[str]:
-        """Return a list of table names in the database."""
+    def list_tables(self) -> List[str]:
+        """List table names in the database."""
 
         query = """
             SELECT name
@@ -46,12 +43,8 @@ class DatabaseService:
     def run_select_query(
         self,
         query: str,
-    ) -> tuple[list[str], list[tuple[object, ...]]]:
-        """Run a SELECT query and return column names with rows.
-
-        Args:
-            query (str): The SELECT query to execute.
-        """
+    ) -> Tuple[List[str], List[Tuple[Any, ...]]]:
+        """Run a SELECT query and return columns and rows."""
 
         normalized_query = query.strip()
         if not normalized_query:
@@ -68,12 +61,8 @@ class DatabaseService:
         except sqlite3.Error as exc:
             raise ValueError(f"Could not execute query: {exc}") from exc
 
-    def get_table_metadata(self, table_name: str) -> list[tuple[str, str]]:
-        """Return column metadata (name, type) for a table.
-
-        Args:
-            table_name (str): The table name to inspect.
-        """
+    def get_table_metadata(self, table_name: str) -> List[Tuple[str, str]]:
+        """Get column metadata (name, type) for a table."""
 
         normalized_table_name = table_name.strip()
         if not normalized_table_name:

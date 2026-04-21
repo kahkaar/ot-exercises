@@ -1,23 +1,33 @@
 import csv
 import json
+from typing import Any, List, Tuple
 
 
 class ExportService:
-    @staticmethod
-    def to_csv(columns: list[str], rows: list[tuple[object, ...]], file_path: str) -> None:
-        """Export rows to a CSV file."""
-        with open(file_path, "w", encoding="utf-8", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(columns)
-            writer.writerows(rows)
+    """Export data to file formats."""
 
     @staticmethod
-    def to_json(columns: list[str], rows: list[tuple[object, ...]], file_path: str) -> None:
-        """Export rows to a JSON file."""
-        # Adding typing to the data variable for pylance to recognize the structure of the data list
-        data: list[dict[str, object]] = []
-        for row in rows:
-            item = {columns[i]: row[i] for i in range(len(columns))}
-            data.append(item)
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+    def to_csv(columns: List[str], rows: List[Tuple[Any, ...]], file_path: str) -> None:
+        """Write rows as CSV."""
+
+        try:
+            with open(file_path, "w", encoding="utf-8", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(columns)
+                writer.writerows(rows)
+        except (OSError, csv.Error) as exc:
+            raise RuntimeError(f"Failed to export CSV: {exc}") from exc
+
+    @staticmethod
+    def to_json(columns: List[str], rows: List[Tuple[Any, ...]], file_path: str) -> None:
+        """Write rows as JSON."""
+
+        try:
+            data = [
+                {columns[i]: row[i] for i in range(len(columns))}
+                for row in rows
+            ]
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except (OSError, TypeError, json.JSONDecodeError) as exc:
+            raise RuntimeError(f"Failed to export JSON: {exc}") from exc

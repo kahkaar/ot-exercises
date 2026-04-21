@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
+from typing import Tuple
 
 
-def create_tree_panel(parent: tk.Widget, title: str) -> tuple[ttk.LabelFrame, ttk.Treeview]:
-    """Create a labeled tree panel with vertical and horizontal scrollbars."""
+def create_tree_panel(parent: tk.Widget, title: str) -> Tuple[ttk.LabelFrame, ttk.Treeview]:
+    """Create a labeled tree panel."""
 
     frame = ttk.LabelFrame(parent, text=title, padding=8)
     frame.grid(column=0, row=1, sticky=tk.NSEW, pady=(12, 0))
