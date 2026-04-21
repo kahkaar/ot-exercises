@@ -23,3 +23,17 @@
 ### Changed
 
 - Refactored [`gui.py`](/db-utils/src/gui.py) to use UI components under [`src/components/`](/db-utils/src/components/)
+
+## Week 5
+
+### Added
+
+- Ability to export query results to CSV and JSON formats through the GUI
+- User can press F5 to run the current query in the query panel
+- Added a sequence diagram to the architecture docs
+
+### Changed
+
+- Updated docstrings to be consistent and compact for all public methods in the codebase
+- Updated typing annotations to be more precise and consistent across the codebase
+- Updated architecture docs to include `ExportService` and its relationship with `ResultsPanel`
