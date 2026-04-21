@@ -9,6 +9,10 @@ A utility application for inspecting local SQLite databases and exporting table 
 The source code is located under the [`db-utils/`](/db-utils/) directory.
 Documentation for the project is located in [`db-utils/docs/`](/db-utils/docs/) (see [Documentation](#documentation)).
 
+## Releases
+
+- [week5](https://github.com/kahkaar/ot-exercises/releases/tag/week5)
+
 ## Installation
 
 1. Install dependencies:
