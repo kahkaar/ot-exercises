@@ -5,6 +5,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
 from services.database import DatabaseService
+from services.export import ExportService
 
 
 @dataclass
@@ -98,10 +99,53 @@ class UI:
 
     def _create_results_panel(self) -> None:
         """Create query results panel on the right side."""
-
         if self._right_panel is None:
             return
-        self._components.results_panel = ResultsPanel.create(self._right_panel)
+        self._components.results_panel = ResultsPanel.create(
+            self._right_panel,
+            on_export_csv=self._export_results_csv,
+            on_export_json=self._export_results_json,
+        )
+
+    def _export_results_csv(self):
+        columns, rows = self._results_panel().get_export_data()
+        if not columns or not rows:
+            messagebox.showinfo("Export CSV", "No results to export.")
+            return
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
+            title="Export results as CSV",
+            initialfile="results.csv"
+        )
+        if not file_path:
+            return
+        try:
+            ExportService.to_csv(columns, rows, file_path)
+        except (OSError, ValueError, TypeError) as exc:
+            messagebox.showerror("Export CSV Error", str(exc))
+            return
+        messagebox.showinfo("Export CSV", f"Results exported to {file_path}")
+
+    def _export_results_json(self):
+        columns, rows = self._results_panel().get_export_data()
+        if not columns or not rows:
+            messagebox.showinfo("Export JSON", "No results to export.")
+            return
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
+            title="Export results as JSON",
+            initialfile="results.json"
+        )
+        if not file_path:
+            return
+        try:
+            ExportService.to_json(columns, rows, file_path)
+        except (OSError, ValueError, TypeError) as exc:
+            messagebox.showerror("Export JSON Error", str(exc))
+            return
+        messagebox.showinfo("Export JSON", f"Results exported to {file_path}")
 
     def _table_panel(self) -> TablePanel:
         if self._components.table_panel is None:

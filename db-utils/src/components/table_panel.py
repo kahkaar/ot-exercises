@@ -1,3 +1,10 @@
+# pylint: disable=duplicate-code
+# Why: duplicate-code error with query_panel.py imports.
+# Justification: The components are using similar imports,
+# have different purposes and implementations.
+# Creating a shared imports module would add
+# unnecessary complexity and coupling between the components.
+
 import tkinter as tk
 from dataclasses import dataclass
 from tkinter import ttk
