@@ -1,7 +1,7 @@
 import tkinter as tk
 from dataclasses import dataclass
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, ttk
 from typing import Any, List, Optional, Tuple
 
 from components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
@@ -27,6 +27,7 @@ class UI:
         self.db_path_var: tk.StringVar = tk.StringVar()
         self.status_var: tk.StringVar = tk.StringVar(
             value="No database opened")
+        self.status_label: Optional[ttk.Label] = None
         self._db: Optional[DatabaseService] = None
         self._left_panel: Optional[ttk.Frame] = None
         self._right_panel: Optional[ttk.Frame] = None
@@ -59,9 +60,10 @@ class UI:
         ttk.Button(frame, text="Open...", command=self.open_database_file).grid(
             column=2, row=0, sticky=tk.E, padx=(8, 0))
 
-        ttk.Label(frame, textvariable=self.status_var, foreground="gray").grid(
-            column=0, row=1, columnspan=3, sticky=(tk.W), pady=(12, 0)
-        )
+        self.status_label = ttk.Label(
+            frame, textvariable=self.status_var, foreground="gray")
+        self.status_label.grid(
+            column=0, row=1, columnspan=3, sticky=(tk.W), pady=(12, 0))
 
     def _create_table_panel(self, frame: ttk.Frame) -> None:
         """Create the table list panel."""
@@ -112,7 +114,7 @@ class UI:
     def _export_results_csv(self):
         columns, rows = self._results_panel().get_export_data()
         if not columns or not rows:
-            messagebox.showinfo("Export CSV", "No results to export.")
+            self._set_status("No results to export.", error=True)
             return
         file_path = filedialog.asksaveasfilename(
             defaultextension=".csv",
@@ -125,14 +127,14 @@ class UI:
         try:
             ExportService.to_csv(columns, rows, file_path)
         except (OSError, ValueError, TypeError) as exc:
-            messagebox.showerror("Export CSV Error", str(exc))
+            self._set_status(f"Export CSV Error: {exc}", error=True)
             return
-        messagebox.showinfo("Export CSV", f"Results exported to {file_path}")
+        self._set_status(f"Results exported to {file_path}")
 
     def _export_results_json(self):
         columns, rows = self._results_panel().get_export_data()
         if not columns or not rows:
-            messagebox.showinfo("Export JSON", "No results to export.")
+            self._set_status("No results to export.", error=True)
             return
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
@@ -145,9 +147,9 @@ class UI:
         try:
             ExportService.to_json(columns, rows, file_path)
         except (OSError, ValueError, TypeError) as exc:
-            messagebox.showerror("Export JSON Error", str(exc))
+            self._set_status(f"Export JSON Error: {exc}", error=True)
             return
-        messagebox.showinfo("Export JSON", f"Results exported to {file_path}")
+        self._set_status(f"Results exported to {file_path}")
 
     def _table_panel(self) -> TablePanel:
         if self._components.table_panel is None:
@@ -194,9 +196,8 @@ class UI:
     def run_select_query(self) -> None:
         """Run the SELECT query from the text box and display results."""
         if self._db is None:
-            messagebox.showerror(
-                "Query Error", "Open a database before running a query.")
-            self.status_var.set("No database opened")
+            self._set_status(
+                "Open a database before running a query.", error=True)
             self._clear_query_results()
             return
 
@@ -205,13 +206,12 @@ class UI:
         try:
             columns, rows = self._db.run_select_query(query)
         except ValueError as exc:
-            messagebox.showerror("Query Error", str(exc))
-            self.status_var.set("Query failed")
+            self._set_status(f"Query Error: {exc}", error=True)
             self._clear_query_results()
             return
 
         self._update_query_results(columns, rows)
-        self.status_var.set(f"Query returned {len(rows)} row(s)")
+        self._set_status(f"Query returned {len(rows)} row(s)")
 
     def inspect_selected_table_metadata(
         self,
@@ -220,29 +220,27 @@ class UI:
         """Inspect metadata for the selected table and display it in the panel."""
 
         if self._db is None:
-            messagebox.showerror(
-                "Metadata Error", "Open a database before inspecting table metadata.")
-            self.status_var.set("No database opened")
+            self._set_status(
+                "Open a database before inspecting table metadata.", error=True)
             self._clear_table_metadata()
             return
 
         table_name = self._table_panel().selected_table_name()
         if table_name is None:
             if notify_if_no_selection:
-                messagebox.showerror(
-                    "Metadata Error", "Select a table before inspecting metadata.")
+                self._set_status(
+                    "Select a table before inspecting metadata.", error=True)
             return
 
         try:
             metadata = self._db.get_table_metadata(table_name)
         except ValueError as exc:
-            messagebox.showerror("Metadata Error", str(exc))
-            self.status_var.set("Metadata inspection failed")
+            self._set_status(f"Metadata Error: {exc}", error=True)
             self._clear_table_metadata()
             return
 
         self._update_table_metadata(list(metadata))
-        self.status_var.set(f"Showing metadata for table '{table_name}'")
+        self._set_status(f"Showing metadata for table '{table_name}'")
 
     def open_database_file(self) -> None:
         """Open a file dialog to select an SQLite database file and validate it."""
@@ -261,22 +259,25 @@ class UI:
 
         db = DatabaseService(path)
         if not db.validate():
-            messagebox.showerror(
-                "Database Error", "Could not open database: Not a valid SQLite file.")
-            self.status_var.set("Failed to open database")
+            self._set_status(
+                "Could not open database: Not a valid SQLite file.", error=True)
             self.db_path_var.set("")
             self._db = None
             self._update_table_list([])
             self._clear_table_metadata()
             return
 
-        self.status_var.set(f"Opened: {Path(path).name}")
+        self._set_status(f"Opened: {Path(path).name}")
         self._db = db
-        messagebox.showinfo("Database Opened",
-                            f"Successfully opened database:\n{path}")
         self._update_table_list(self._db.list_tables())
         self._clear_table_metadata()
         self._clear_query_results()
+
+    def _set_status(self, message: str, error: bool = False) -> None:
+        """Set the status or error message in the status area."""
+        self.status_var.set(message)
+        if self.status_label:
+            self.status_label.configure(foreground="red" if error else "gray")
 
     def start(self) -> None:
         """Start the Tkinter main loop."""

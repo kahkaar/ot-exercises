@@ -17,8 +17,8 @@ The local user should be able to:
 - [x] export table data or query results to `csv`
 - [x] export table data or query results to `json`
 - [x] inspect basic table metadata (for example, column names and types)
-- [ ] receive clear error messages for invalid paths, malformed SQL, and file write failures
-  - [x] error messages shown as popup dialogs
+- [x] receive clear error messages for invalid paths, malformed SQL, and file write failures
+  - [ ] ~~error messages shown as popup dialogs~~
 
 ### Further Development Ideas
 
@@ -27,7 +27,7 @@ The local user should be able to:
 - [ ] support additional export formats
 - [ ] additional improvements identified during development
   - [x] keyboard shortcut to run the current query in the query panel
-  - [ ] info and error messages shown in a dedicated status area in the GUI instead of popups
+  - [x] info and error messages shown in a dedicated status area in the GUI instead of popups
   - [ ] save queries to a database or local file for later retrieval
   - [ ] support for more complex metadata inspection, such as foreign keys and indexes
 
