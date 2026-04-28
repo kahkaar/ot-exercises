@@ -37,3 +37,13 @@
 - Updated docstrings to be consistent and compact for all public methods in the codebase
 - Updated typing annotations to be more precise and consistent across the codebase
 - Updated architecture docs to include `ExportService` and its relationship with `ResultsPanel`
+
+## Week 6
+
+### Added
+
+- Saves queries to a database in the home directory
+
+### Changed
+
+- Error messages are shown in a specified area

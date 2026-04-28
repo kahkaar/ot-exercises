@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.simpledialog
 from dataclasses import dataclass
 from pathlib import Path
 from tkinter import filedialog, ttk
@@ -7,6 +8,7 @@ from typing import Any, List, Optional, Tuple
 from components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
 from services.database import DatabaseService
 from services.export import ExportService
+from services.query_history import QueryHistoryService
 
 
 @dataclass
@@ -99,7 +101,7 @@ class UI:
         right_panel.rowconfigure(1, weight=1)
         self._right_panel = right_panel
         self._components.query_panel = QueryPanel.create(
-            right_panel, self.run_select_query)
+            right_panel, self.run_select_query, self.show_query_history)
 
     def _create_results_panel(self) -> None:
         """Create query results panel on the right side."""
@@ -202,6 +204,13 @@ class UI:
             return
 
         query = self._query_panel().query()
+        if not query:
+            self._set_status("Query is empty.", error=True)
+            self._clear_query_results()
+            return
+
+        # Save query to history
+        QueryHistoryService.save_query(query)
 
         try:
             columns, rows = self._db.run_select_query(query)
@@ -212,6 +221,35 @@ class UI:
 
         self._update_query_results(columns, rows)
         self._set_status(f"Query returned {len(rows)} row(s)")
+
+    def show_query_history(self) -> None:
+        """Show a dialog with saved query history."""
+
+        history = QueryHistoryService.load_history()
+        if not history:
+            self._set_status("No saved queries found.")
+            return
+
+        # Simple selection dialog (could be improved with a custom dialog)
+        selected = tkinter.simpledialog.askstring(
+            "Query History",
+            "Select a query by number:\n" +
+            "\n".join(f"{i+1}: {q[:60]}" for i, q in enumerate(history)),
+            parent=self._root
+        )
+
+        if not selected:
+            return
+        try:
+            idx = int(selected) - 1
+            if 0 <= idx < len(history):
+                self._query_panel().query_text.delete("1.0", tk.END)
+                self._query_panel().query_text.insert("1.0", history[idx])
+                self._set_status("Loaded query from history.")
+            else:
+                self._set_status("Invalid selection.", error=True)
+        except ValueError:
+            self._set_status("Invalid input.", error=True)
 
     def inspect_selected_table_metadata(
         self,

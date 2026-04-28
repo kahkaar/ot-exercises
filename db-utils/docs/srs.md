@@ -29,6 +29,8 @@ The local user should be able to:
   - [x] keyboard shortcut to run the current query in the query panel
   - [x] info and error messages shown in a dedicated status area in the GUI instead of popups
   - [ ] save queries to a database or local file for later retrieval
+    - [x] queries are shown and can be retrived
+    - [ ] make the popup a select list
   - [ ] support for more complex metadata inspection, such as foreign keys and indexes
 
 ### Environment and Constraints

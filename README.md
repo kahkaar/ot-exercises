@@ -73,6 +73,7 @@ curl -L -o northwind.db https://raw.githubusercontent.com/jpwhite3/northwind-SQL
 
 ## Documentation
 
+- [Guide](/db-utils/docs/guide.md)
 - [Architecture](/db-utils/docs/architecture.md)
 - [Changelog](/db-utils/docs/changelog.md)
 - [Software Requirements Specification](/db-utils/docs/srs.md)
