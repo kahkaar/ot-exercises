@@ -7,7 +7,9 @@ This guide explains how to use the db-utils application for browsing and exporti
 1. Open a terminal and navigate to the project directory (where main.py is located).
 2. Run the application with:
 
-   python3 -m src.main
+   ```bash
+   poetry run invoke start
+   ```
 
 The main window will open.
 
@@ -41,7 +43,7 @@ The main window will open.
 
 ## Status and Error Messages
 
-- Status updates and error messages are shown in the status area at the bottom of the window.
+- Status updates and error messages are shown in the status area.
 
 ## Exiting the Application
 
