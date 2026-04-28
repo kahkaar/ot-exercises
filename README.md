@@ -11,6 +11,7 @@ Documentation for the project is located in [`db-utils/docs/`](/db-utils/docs/) 
 
 ## Releases
 
+- [week6](https://github.com/kahkaar/ot-exercises/releases/tag/week6)
 - [week5](https://github.com/kahkaar/ot-exercises/releases/tag/week5)
 
 ## Installation
