@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from tkinter import ttk
 from typing import Any, Callable, List, Optional, Tuple
 
-from components.tree_panel import create_tree_panel
+from ui.components.tree_panel import create_tree_panel
 
 
 @dataclass

@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from gui import UI
+from ui.gui import UI
 
 
 def main() -> None:

@@ -5,7 +5,7 @@ from pathlib import Path
 from tkinter import filedialog, ttk
 from typing import Any, List, Optional, Tuple
 
-from components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
+from ui.components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
 from services.database import DatabaseService
 from services.export import ExportService
 from services.query_history import QueryHistoryService
