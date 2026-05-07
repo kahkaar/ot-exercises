@@ -1,7 +1,7 @@
 import tkinter as tk
 from dataclasses import dataclass
 from tkinter import ttk
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from ui.components.tree_panel import create_tree_panel
 
@@ -28,8 +28,16 @@ class MetadataPanel:
         """Clear all rows from the tree."""
         self.tree.delete(*self.tree.get_children())
 
-    def update(self, metadata: List[Tuple[str, str]]) -> None:
+    def update(self, metadata: List[Tuple[str, str]] | Dict[str, List[Tuple[str, str]]]) -> None:
         """Update tree with column metadata."""
         self.clear()
-        for row in metadata:
-            self.tree.insert("", tk.END, values=row)
+
+        if isinstance(metadata, dict):
+            for table_name, columns in metadata.items():
+                self.tree.insert("", tk.END, values=(
+                    f"Table: {table_name}", ""))
+                for column in columns:
+                    self.tree.insert("", tk.END, values=column)
+        else:
+            for row in metadata:
+                self.tree.insert("", tk.END, values=row)

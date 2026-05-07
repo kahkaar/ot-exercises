@@ -165,6 +165,64 @@ class TestDatabaseService(unittest.TestCase):
         with self.assertRaises(ValueError):
             db.get_table_metadata("foo")
 
+    def test_get_full_schema_returns_all_tables(self) -> None:
+        """Test that get_full_schema() returns metadata for all tables."""
+
+        with sqlite3.connect(self.db_path) as con:
+            con.execute(
+                "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);"
+            )
+            con.execute(
+                "CREATE TABLE posts (id INTEGER PRIMARY KEY, title TEXT);"
+            )
+
+        db = DatabaseService(self.db_path)
+        schema = db.get_full_schema()
+
+        self.assertEqual(set(schema.keys()), {"users", "posts"})
+        self.assertEqual(
+            schema["users"],
+            [("id", "INTEGER"), ("name", "TEXT")],
+        )
+        self.assertEqual(
+            schema["posts"],
+            [("id", "INTEGER"), ("title", "TEXT")],
+        )
+
+    def test_get_full_schema_empty_database(self) -> None:
+        """Test that get_full_schema() returns an empty dict for a database with no tables."""
+
+        _create_test_db(self.db_path, [])
+        db = DatabaseService(self.db_path)
+        schema = db.get_full_schema()
+        self.assertEqual(schema, {})
+
+    def test_get_full_schema_preserves_table_order(self) -> None:
+        """Test that get_full_schema() returns tables in sorted order."""
+
+        with sqlite3.connect(self.db_path) as con:
+            con.execute("CREATE TABLE users (id INTEGER);")
+            con.execute("CREATE TABLE posts (id INTEGER);")
+            con.execute("CREATE TABLE blogs (id INTEGER);")
+
+        db = DatabaseService(self.db_path)
+        schema = db.get_full_schema()
+        self.assertEqual(list(schema.keys()), ["blogs", "posts", "users"])
+
+    def test_get_full_schema_handles_double_quotes_in_table_name(self) -> None:
+        """Test that get_full_schema() escapes double quotes in table names."""
+
+        with sqlite3.connect(self.db_path) as con:
+            con.execute(
+                'CREATE TABLE "weird""table" (id INTEGER, name TEXT);')
+
+        db = DatabaseService(self.db_path)
+        schema = db.get_full_schema()
+
+        self.assertEqual(set(schema.keys()), {'weird"table'})
+        self.assertEqual(schema['weird"table'], [
+                         ("id", "INTEGER"), ("name", "TEXT")])
+
 
 if __name__ == "__main__":
     unittest.main()

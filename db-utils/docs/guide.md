@@ -23,6 +23,10 @@ The main window will open.
 
 - Click on any table in the list to see its columns and types in the metadata panel.
 
+## Viewing Database Schema
+
+- Click on the "View Schema" button to see the entire database schema, including all tables and their columns.
+
 ## Running Queries
 
 - Use the query editor to write a SELECT statement.

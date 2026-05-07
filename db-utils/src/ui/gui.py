@@ -3,7 +3,7 @@ import tkinter.simpledialog
 from dataclasses import dataclass
 from pathlib import Path
 from tkinter import filedialog, ttk
-from typing import Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ui.components import MetadataPanel, QueryPanel, ResultsPanel, TablePanel
 from services.database import DatabaseService
@@ -62,10 +62,13 @@ class UI:
         ttk.Button(frame, text="Open...", command=self.open_database_file).grid(
             column=2, row=0, sticky=tk.E, padx=(8, 0))
 
+        ttk.Button(frame, text="View Schema", command=self.view_full_schema).grid(
+            column=2, row=1, sticky=tk.E, padx=(8, 0), pady=(4, 0))
+
         self.status_label = ttk.Label(
             frame, textvariable=self.status_var, foreground="gray")
         self.status_label.grid(
-            column=0, row=1, columnspan=3, sticky=(tk.W), pady=(12, 0))
+            column=0, row=1, columnspan=4, sticky=(tk.W), pady=(12, 0))
 
     def _create_table_panel(self, frame: ttk.Frame) -> None:
         """Create the table list panel."""
@@ -184,7 +187,7 @@ class UI:
 
     def _update_table_metadata(
         self,
-        metadata: List[Tuple[str, str]],
+        metadata: List[Tuple[str, str]] | Dict[str, List[Tuple[str, str]]],
     ) -> None:
         self._metadata_panel().update(metadata)
 
@@ -230,7 +233,6 @@ class UI:
             self._set_status("No saved queries found.")
             return
 
-        # Simple selection dialog (could be improved with a custom dialog)
         selected = tkinter.simpledialog.askstring(
             "Query History",
             "Select a query by number:\n" +
@@ -279,6 +281,30 @@ class UI:
 
         self._update_table_metadata(list(metadata))
         self._set_status(f"Showing metadata for table '{table_name}'")
+
+    def view_full_schema(self) -> None:
+        """View the full database schema for all tables."""
+
+        if self._db is None:
+            self._set_status(
+                "Open a database before viewing schema.", error=True)
+            self._clear_table_metadata()
+            return
+
+        try:
+            schema = self._db.get_full_schema()
+        except ValueError as exc:
+            self._set_status(f"Schema Error: {exc}", error=True)
+            self._clear_table_metadata()
+            return
+
+        if not schema:
+            self._set_status("No tables found in database.")
+            self._clear_table_metadata()
+            return
+
+        self._update_table_metadata(schema)
+        self._set_status(f"Showing full schema ({len(schema)} table(s))")
 
     def open_database_file(self) -> None:
         """Open a file dialog to select an SQLite database file and validate it."""

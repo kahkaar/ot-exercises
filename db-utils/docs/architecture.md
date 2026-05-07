@@ -5,13 +5,14 @@
 The project is organized into a few clear parts:
 
 - `main.py`: Starts the program. Sets up the main window and launches the UI.
-- `gui.py`: Manages the main window and overall workflow. This is where the UI panels and services are created and connected.
-- `components/`: All the main UI panels live here:
-  - `TablePanel`: Shows the list of tables in the database.
-  - `MetadataPanel`: Displays column info for the selected table.
-  - `QueryPanel`: Lets the user write and run SELECT queries.
-  - `ResultsPanel`: Shows query results and lets you export them.
-  - `TreePanel`: Shared helper for tree-style views.
+- `ui/`: Contains the user interface components.
+  - `gui.py`: Manages the main window and overall workflow. This is where the UI panels and services are created and connected.
+  - `components/`: All the main UI panels live here:
+    - `TablePanel`: Shows the list of tables in the database.
+    - `MetadataPanel`: Displays column info for the selected table and whole database schema.
+    - `QueryPanel`: Lets the user write and run SELECT queries.
+    - `ResultsPanel`: Shows query results and lets you export them.
+    - `TreePanel`: Shared helper for tree-style views.
 - `services/`: Handles the actual logic and database work:
   - `DatabaseService`: Checks the SQLite database, lists tables, fetches metadata, and runs queries.
   - `ExportService`: Exports data to CSV and JSON files.

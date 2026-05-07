@@ -1,5 +1,5 @@
 import sqlite3
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 
 class DatabaseService:
@@ -36,7 +36,8 @@ class DatabaseService:
         try:
             with sqlite3.connect(self._path) as con:
                 cur = con.execute(query)
-            return [row[0] for row in cur.fetchall()]
+                rows = cur.fetchall()
+            return [row[0] for row in rows]
         except sqlite3.Error:
             return []
 
@@ -91,3 +92,28 @@ class DatabaseService:
         except sqlite3.Error as exc:
             raise ValueError(
                 f"Could not inspect table metadata: {exc}") from exc
+
+    def get_full_schema(self) -> Dict[str, List[Tuple[str, str]]]:
+        """Get metadata for all tables in the database."""
+
+        query = """
+            SELECT name FROM sqlite_master
+            WHERE type='table' AND name NOT LIKE 'sqlite_%'
+            ORDER BY name;
+        """
+
+        schema = {}
+
+        try:
+            with sqlite3.connect(self._path) as con:
+                tables = [row[0] for row in con.execute(query).fetchall()]
+                for table_name in tables:
+                    escaped = table_name.replace('"', '""')
+                    rows = con.execute(
+                        f'PRAGMA table_info("{escaped}");').fetchall()
+                    schema[table_name] = [
+                        (str(row[1]), str(row[2] or "")) for row in rows
+                    ]
+            return schema
+        except sqlite3.Error:
+            return {}

@@ -22,7 +22,7 @@ The local user should be able to:
 
 ### Further Development Ideas
 
-- [ ] view the full database schema
+- [x] view the full database schema
 - [ ] start the application from the CLI with a database path, for example: `db-utils /path/to/file.db`
 - [ ] support additional export formats
 - [ ] additional improvements identified during development
