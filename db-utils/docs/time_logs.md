@@ -10,4 +10,5 @@
 | 27.4. | 2     | Error messages shown in a status area instead of popups                                                                               |
 | 28.4. | 5     | See [`week 6 changelog`](./changelog.md#week-6)                                                                                       |
 | 7.5.  | 4     | User can now view the full database schema. Implemented suggestions in issue ([#1](https://github.com/kahkaar/ot-exercises/issues/1)) |
-| TOTAL | 41    |
+| 10.5. | 2     | Updated documentation, added test report                                                                                              |
+| TOTAL | 43    |

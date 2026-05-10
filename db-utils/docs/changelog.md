@@ -47,3 +47,14 @@
 ### Changed
 
 - Error messages are shown in a specified area
+
+## Week 7
+
+### Added
+
+- Added a way to view the whole database schema in the GUI, showing all tables and their columns
+- Added testing report documentation
+
+### Changed
+
+- Moved the user interface elements to a new subdirectory `src/ui/` for better organization (#1)

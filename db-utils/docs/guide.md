@@ -4,10 +4,10 @@ This guide explains how to use the db-utils application for browsing and exporti
 
 ## Starting the Application
 
-1. Open a terminal and navigate to the project directory (where main.py is located).
+1. Open a terminal and navigate to the [`db-utils/`](/db-utils/) directory.
 2. Run the application with:
-
    ```bash
+   poetry install
    poetry run invoke start
    ```
 
@@ -15,7 +15,7 @@ The main window will open.
 
 ## Opening a Database
 
-- Click the button or menu to select a database file.
+- Click the "Open..." button to select a database file.
 - Browse to the desired SQLite database file and confirm your selection.
 - The list of tables in the database will appear on the left.
 
